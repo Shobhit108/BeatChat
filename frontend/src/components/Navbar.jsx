@@ -64,7 +64,7 @@ const Navbar = () => {
   >
 
     <img
-      src="/logo.wepb"
+      src="/logo.webp"
       alt="BeatChat"
       className="h-10 w-auto object-contain drop-shadow-md"
     />
