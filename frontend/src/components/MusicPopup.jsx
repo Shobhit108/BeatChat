@@ -161,7 +161,7 @@ const skipBackward = () => {
       {/* SONG RESULTS */}
       <div className="max-h-64 overflow-y-auto space-y-2">
 
-        {songs.map((song) => (
+        {songs?.map((song) => (
 
           <div
             key={song.id}
