@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { useAuthStore } from "../store/useAuthStore";
 import { useMusicStore } from "../store/useMusicStore";
-
+import { useLocation } from "react-router-dom";
 import {
   LogOut,
 
@@ -19,7 +19,7 @@ import {
 
 import MusicPopup from "./MusicPopup";
 
-const Navbar = () => {
+const Navbar = ({ setIsSidebarOpen }) => {
 
   const { logout, authUser } = useAuthStore();
 
@@ -28,7 +28,7 @@ const Navbar = () => {
   const [openMusic, setOpenMusic] = useState(false);
 
   const audioRef = useRef(null);
-
+const location = useLocation();
   // GLOBAL AUDIO PLAYER
   useEffect(() => {
 
@@ -56,19 +56,28 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-full">
 
           {/* LEFT */}
-<div className="flex items-center gap-8">
+{/* LEFT */}
+{/* LEFT */}
+<div className="flex items-center gap-3">
+
+  {location.pathname === "/" && (
+    <button
+      className="lg:hidden btn btn-sm btn-circle"
+      onClick={() => setIsSidebarOpen(true)}
+    >
+      ☰
+    </button>
+  )}
 
   <Link
     to="/"
     className="hover:opacity-80 transition-all"
   >
-
     <img
       src="/logo.webp"
       alt="BeatChat"
       className="h-10 w-auto object-contain drop-shadow-md"
     />
-
   </Link>
 
 </div>

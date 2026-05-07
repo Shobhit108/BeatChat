@@ -5,7 +5,7 @@ import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 import { axiosInstance } from "../lib/axios";
 import { AI_BOT } from "../constants/ai";
-const Sidebar = () => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const { selectedUser, setSelectedUser, isUsersLoading ,recentChats, getRecentChats,addRecentChat  } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
@@ -67,7 +67,25 @@ useEffect(() => {
   if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
-    <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
+  <>
+    {isSidebarOpen && (
+      <div
+        className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+        onClick={() => setIsSidebarOpen(false)}
+      />
+    )}
+<aside
+  className={`
+    fixed lg:relative top-16 lg:top-0 left-0
+    z-50 lg:z-auto flex flex-col
+    h-[calc(100vh-4rem)] lg:h-full
+    w-[85%] sm:w-72
+    bg-base-100 border-r border-base-300
+    transform transition-transform duration-300
+    ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+    lg:translate-x-0
+  `}
+>
       <div className="border-b border-base-300 w-full p-5">
         <div className="flex items-center gap-2">
           <Users className="size-6" />
@@ -77,7 +95,7 @@ useEffect(() => {
         {/* 🔹 NEW: Search input */}
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search Users..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="mt-3 w-full input input-sm input-bordered"
@@ -109,14 +127,15 @@ useEffect(() => {
               setSelectedUser(user);
               addRecentChat(user);
               setQuery("");
+              setIsSidebarOpen(false);
             }}
             className={`
-              w-full p-3 flex items-center gap-3
+            w-full px-3 py-2 flex items-center gap-3
               hover:bg-base-300 transition-colors
               ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}
             `}
           >
-            <div className="relative mx-auto lg:mx-0">
+           <div className="relative flex-shrink-0">
               <img
                 src={user.profilePic || "/avatar.png"}
                 alt={user.name}
@@ -130,7 +149,7 @@ useEffect(() => {
               )}
             </div>
 
-            <div className="hidden lg:block text-left min-w-0">
+        <div className="text-left min-w-0 flex-1">
               <div className="font-medium truncate">{user.fullName}</div>
 
               <div className="text-sm text-zinc-400 truncate">
@@ -156,8 +175,14 @@ useEffect(() => {
           <div className="text-center text-zinc-500 py-4">No users found</div>
         )}
       </div>
+      <div className="mt-auto p-3 text-center border-t border-base-300">
+  <p className="text-lg text-primary">
+  Crafted with ♥ by Shobhit Tiwari
+  </p>
+</div>
     </aside>
-  );
+  </>
+);
 };
 
 export default Sidebar;

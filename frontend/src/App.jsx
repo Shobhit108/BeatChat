@@ -7,13 +7,15 @@ import SettingPage from "./pages/SettingPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import {Loader} from "lucide-react"
 import {Toaster} from "react-hot-toast"
 import { useThemeStore } from "./store/useThemeStore";
+
 const  App = () => {
 const {authUser,checkAuth, ischeckingAuth} =  useAuthStore()
 const {theme}  = useThemeStore()
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   useEffect(() => {
 
     checkAuth()
@@ -29,10 +31,26 @@ if(ischeckingAuth && !authUser) return (
  
 )
   return (
-    <div data-theme={theme} >
-      <Navbar />
+ <div data-theme={theme}>
+  <Navbar setIsSidebarOpen={setIsSidebarOpen} />
+
+
+
+
       <Routes>
-        <Route path="/" element={ authUser ? <HomePage /> : <Navigate to="/login" />} />
+<Route
+  path="/"
+  element={
+    authUser ? (
+      <HomePage
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
+    ) : (
+      <Navigate to="/login" />
+    )
+  }
+/>
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to ="/" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to = "/" />} />
         <Route path="/settings" element={<SettingPage />} />
