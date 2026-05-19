@@ -99,45 +99,59 @@ addRecentChat: (user) => {
     toast.error(error.response?.data?.message || "Failed to send");
   }
 },
-
- subscribeToMessages: () => {
+subscribeToMessages: () => {
   const socket = useAuthStore.getState().socket;
   if (!socket) return;
 
-  socket.off("newMessage"); // 👈 duplicate listeners remove
+  socket.off("newMessage");
+  socket.off("typing");
+  socket.off("stopTyping");
 
-  socket.on("newMessage", (newMessage) => {
-      console.log("NEW MESSAGE:", newMessage);
-    const { selectedUser, messages, getRecentChats } = get();
+  socket.on("newMessage", async (newMessage) => {
+    const {
+      selectedUser,
+      messages,
+      getRecentChats,
+    } = get();
 
     if (
       selectedUser &&
-      newMessage.senderId.toString() === selectedUser._id.toString()
+      newMessage.senderId.toString() ===
+        selectedUser._id.toString()
     ) {
       set({
         messages: [...messages, newMessage],
       });
     }
-socket.on("typing", ({ from }) => {
-  set((state) => ({
-    typingUsers: [...new Set([...state.typingUsers, from])],
-  }));
-});
 
-socket.on("stopTyping", ({ from }) => {
-  set((state) => ({
-    typingUsers: state.typingUsers.filter((id) => id !== from),
-  }));
-});
-    getRecentChats();
+    await getRecentChats();
+  });
+
+  socket.on("typing", ({ from }) => {
+    set((state) => ({
+      typingUsers: [
+        ...new Set([...state.typingUsers, from]),
+      ],
+    }));
+  });
+
+  socket.on("stopTyping", ({ from }) => {
+    set((state) => ({
+      typingUsers: state.typingUsers.filter(
+        (id) => id !== from
+      ),
+    }));
   });
 },
 
-  unsubscribeFromMessages: () => {
-    const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
-  },
 
+unsubscribeFromMessages: () => {
+  const socket = useAuthStore.getState().socket;
+
+  socket.off("newMessage");
+  socket.off("typing");
+  socket.off("stopTyping");
+},
  setSelectedUser: (user) => {
   set({ selectedUser: user, messages: [] });
 },}));
